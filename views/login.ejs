@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CodeBot AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark Theme (Same as Front Page) */
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --text: #ffffff;
+            --text-dim: #a1a1aa;
+            --primary: #22c55e;
+            --primary-glow: rgba(34, 197, 94, 0.15);
+            --border: #27272a;
+            --glass: rgba(10, 10, 10, 0.8);
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --surface: #f4f4f5;
+            --text: #09090b;
+            --text-dim: #71717a;
+            --primary: #16a34a;
+            --primary-glow: rgba(22, 163, 74, 0.1);
+            --border: #e4e4e7;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background 0.5s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 8%;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        
+        #theme-toggle {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Login Section */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            background: radial-gradient(circle at center, var(--primary-glow), transparent 70%);
+        }
+
+        .login-card {
+            background: var(--surface);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { font-size: 2rem; margin-bottom: 10px; text-align: center; }
+        .subtitle { color: var(--text-dim); text-align: center; margin-bottom: 30px; font-size: 0.9rem; }
+
+        form input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        form input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .switch-text { text-align: center; margin-top: 20px; color: var(--text-dim); font-size: 0.9rem; }
+        .switch-text a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        /* Professional Footer (Same as Front Page) */
+        footer { 
+            padding: 60px 8% 30px; 
+            background: var(--surface); 
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .footer-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; margin-bottom: 40px;
+        }
+
+        .footer-col h4 { margin-bottom: 20px; font-weight: 700; color: var(--text); }
+        .footer-col a { display: block; text-decoration: none; color: var(--text-dim); margin-bottom: 10px; font-size: 0.85rem; transition: 0.3s; }
+        .footer-col a:hover { color: var(--primary); transform: translateX(5px); }
+        
+        .footer-logo-desc { grid-column: span 1; }
+        .footer-logo-desc p { color: var(--text-dim); font-size: 0.9rem; margin-top: 10px; }
+
+        .copyright { 
+            text-align: center; color: var(--text-dim); font-size: 0.8rem; 
+            padding-top: 30px; border-top: 1px solid var(--border); 
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .footer-logo-desc { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <nav>
+        <a href="/" class="logo">⚡ CodeBot</a>
+        <button id="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+    </nav>
+
+    <div class="main-content">
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Enter your details to continue coding.</p>
+            
+            <form method="POST" action="/login">
+                <input name="email" type="email" placeholder="Email Address" required>
+                <input name="password" type="password" placeholder="Password" required>
+                <button type="submit" class="btn-login">Sign In</button>
+            </form>
+
+            <p class="switch-text">New to CodeBot? <a href="/signup">Create account</a></p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col footer-logo-desc">
+                <div class="logo">⚡ CodeBot</div>
+                <p>The only AI partner you'll ever need for production-grade code.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <a href="#">Features</a>
+                <a href="#">Security</a>
+                <a href="#">API</a>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <a href="#">Docs</a>
+                <a href="#">Discord</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 CodeBot AI Inc. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('theme-toggle');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = "🌙 Dark Mode";
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = "☀️ Light Mode";
+            }
+        }
+    </script>
+</body>
+</html>
