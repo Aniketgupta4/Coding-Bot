@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chatbot Demo</title>
 
     <style>
@@ -9,17 +10,24 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Essential for mobile height fixes */
+        html, body {
+            height: 100%;
+            height: -webkit-fill-available;
+            overflow: hidden;
         }
 
         body {
             display: flex;
-            height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #1e1e2f;
             color: #fff;
         }
 
-        /* SIDEBAR */
+        /* --- SIDEBAR (Mobile Drawer) --- */
         .sidebar {
             width: 240px;
             background: linear-gradient(180deg, #111827, #020617);
@@ -27,6 +35,8 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 12px rgba(0,0,0,.4);
+            transition: transform 0.3s ease;
+            z-index: 1001;
         }
 
         .sidebar h2 {
@@ -42,12 +52,33 @@
             text-align: center;
         }
 
-        /* CHAT */
+        /* --- CHAT AREA --- */
         .chat {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: #0f172a;
+            position: relative;
+            height: 100%;
+        }
+
+        /* Mobile Navbar */
+        .mobile-header {
+            display: none;
+            background: #111827;
+            padding: 10px 15px;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: 1px solid #334155;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 15px;
         }
 
         .messages {
@@ -57,15 +88,17 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .msg {
-            max-width: 70%;
-            padding: 14px 18px;
+            max-width: 80%;
+            padding: 12px 16px;
             border-radius: 16px;
             font-size: 15px;
             line-height: 1.5;
             box-shadow: 0 2px 6px rgba(0,0,0,.4);
+            word-wrap: break-word;
         }
 
         .user {
@@ -80,12 +113,13 @@
             border-bottom-left-radius: 0;
         }
 
-        /* INPUT */
+        /* --- INPUT AREA --- */
         .input-area {
             display: flex;
             padding: 15px;
             background: #020617;
             border-top: 1px solid #334155;
+            flex-shrink: 0; /* Prevents input from squashing */
         }
 
         .input-area input {
@@ -96,12 +130,12 @@
             outline: none;
             background: #1f2937;
             color: #fff;
-            font-size: 15px;
+            font-size: 16px; /* Prevents iOS auto-zoom */
         }
 
         .input-area button {
-            margin-left: 12px;
-            padding: 12px 22px;
+            margin-left: 10px;
+            padding: 0 20px;
             border-radius: 20px;
             border: none;
             cursor: pointer;
@@ -110,35 +144,25 @@
             color: #000;
         }
 
-        /* LOGIN POPUP */
+        /* --- POPUP --- */
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.75);
+            background: rgba(0,0,0,.85);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 999;
+            z-index: 2000;
+            padding: 20px;
         }
 
         .popup {
             background: #1f2937;
             padding: 30px;
-            width: 360px;
+            width: 100%;
+            max-width: 360px;
             border-radius: 16px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,.7);
-        }
-
-        .popup h3 {
-            margin-bottom: 12px;
-            color: #22c55e;
-        }
-
-        .popup p {
-            font-size: 14px;
-            color: #cbd5e1;
-            margin-bottom: 20px;
         }
 
         .popup a {
@@ -150,27 +174,51 @@
             font-weight: bold;
         }
 
-        .login-btn {
-            background: #2563eb;
-            color: #fff;
-        }
+        .login-btn { background: #2563eb; color: #fff; }
+        .signup-btn { background: #22c55e; color: #000; }
 
-        .signup-btn {
-            background: #22c55e;
-            color: #000;
+        /* --- MOBILE MEDIA QUERIES --- */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .mobile-header {
+                display: flex;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+            }
+            .sidebar-overlay.show { display: block; }
+            .msg { max-width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <div class="sidebar" id="sidebar">
         <h2>CodeBot</h2>
         <p>Demo Mode<br>Login required for full access</p>
     </div>
 
-    <!-- CHAT -->
     <div class="chat">
+        <div class="mobile-header">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <strong style="color: #22c55e;">CodeBot Demo</strong>
+        </div>
+
         <div id="messages" class="messages"></div>
 
         <div class="input-area">
@@ -179,7 +227,6 @@
         </div>
     </div>
 
-    <!-- LOGIN POPUP -->
     <div id="overlay" class="overlay">
         <div class="popup">
             <h3>Login Required</h3>
@@ -190,6 +237,12 @@
     </div>
 
     <script>
+        // Responsive Menu Function
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
         const messages = document.getElementById("messages");
         const input = document.getElementById("msg");
 
@@ -225,7 +278,7 @@
         setTimeout(() => {
             document.getElementById("overlay").style.display = "flex";
             input.disabled = true;
-        }, 4000); // 4 sec
+        }, 4000); 
     </script>
 
 </body>
