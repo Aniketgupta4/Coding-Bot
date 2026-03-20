@@ -11,29 +11,42 @@ connectDB();
 
 const app = express();
 
+// Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
+// Session
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
 
+// View engine
 app.set("view engine", "ejs");
 
+// Routes
 app.get("/", (req, res) => {
-    res.render("home"); // views/home.ejs render karega
+    res.render("home");
 });
 
 app.get("/demo", (req, res) => {
-    res.render("demo"); 
+    res.render("demo");
 });
 
+// API / feature routes
 app.use(authRoutes);
 app.use(chatRoutes);
 
-app.listen(process.env.PORT, () =>
-    console.log("Server running on " + process.env.PORT)
+// ✅ Fallback route (IMPORTANT for refresh / unknown URLs)
+app.get("*", (req, res) => {
+    res.redirect("/");
+});
+
+// ✅ Safe PORT handling
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () =>
+    console.log("Server running on " + PORT)
 );
