@@ -35,16 +35,16 @@ app.get("/demo", (req, res) => {
     res.render("demo");
 });
 
-// API / feature routes
+// Feature routes
 app.use(authRoutes);
 app.use(chatRoutes);
 
-// ✅ Fallback route (IMPORTANT for refresh / unknown URLs)
-app.get("*", (req, res) => {
+// ✅ Fallback route (Express 5 compatible)
+app.use((req, res) => {
     res.redirect("/");
 });
 
-// ✅ Safe PORT handling
+// ✅ Safe PORT handling (important for Render)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () =>
