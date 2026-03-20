@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeBot | The AI Coding Revolution</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        const savedTheme = localStorage.getItem('site-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
     <style>
         :root {
-            /* Dark Theme (Re-designed for Premium Matte Look) */
+            /* Dark Theme (Premium Matte Look) */
             --bg: #0a0a0a;
             --surface: #141414;
             --text: #ffffff;
@@ -17,33 +24,39 @@
             --accent: #3b82f6;
             --border: #27272a;
             --glass: rgba(10, 10, 10, 0.8);
+            --scrollbar-thumb: rgba(255, 255, 255, 0.2);
         }
 
         [data-theme="light"] {
+            /* Light Theme */
             --bg: #ffffff;
             --surface: #f4f4f5;
             --text: #09090b;
-            --text-dim: #71717a;
+            --text-dim: #64748b;
             --primary: #16a34a;
             --primary-glow: rgba(22, 163, 74, 0.1);
             --accent: #2563eb;
             --border: #e4e4e7;
             --glass: rgba(255, 255, 255, 0.8);
+            --scrollbar-thumb: rgba(0, 0, 0, 0.2);
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            transition: background 0.5s ease;
             overflow-x: hidden;
         }
 
-        /* Responsive Navbar */
+        /* --- CUSTOM SLEEK SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- NAVBAR --- */
         nav {
             position: fixed; top: 0; width: 100%;
             display: flex; justify-content: space-between; align-items: center;
@@ -54,10 +67,10 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; text-decoration: none; }
         
         .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; font-size: 0.9rem; opacity: 0.8; transition: 0.3s; }
+        .nav-links a { text-decoration: none; color: var(--text); font-weight: 600; font-size: 0.95rem; opacity: 0.9; transition: 0.3s; }
         .nav-links a:hover { opacity: 1; color: var(--primary); }
 
         /* Hamburger Menu Icon */
@@ -70,149 +83,110 @@
             border: none;
             z-index: 1100;
         }
-
-        .mobile-menu-btn span {
-            width: 25px;
-            height: 2px;
-            background-color: var(--text);
-            transition: 0.3s;
-        }
+        .mobile-menu-btn span { width: 25px; height: 2px; background-color: var(--text); transition: 0.3s; }
 
         /* Theme Toggle */
-        #theme-toggle {
+        .theme-toggle-btn {
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
         }
+        .theme-toggle-btn:hover { border-color: var(--primary); }
 
-        /* Hero Section */
-        .hero {
-            padding: 160px 5% 100px;
-            text-align: center;
-            background: radial-gradient(circle at 50% -20%, var(--primary-glow), transparent 50%);
-        }
-
-        .hero h1 { 
-            font-size: clamp(2.5rem, 8vw, 5rem); 
-            font-weight: 800; 
-            letter-spacing: -3px; 
-            line-height: 1;
-            margin-bottom: 20px;
-        }
-
-        .hero p { 
-            max-width: 650px; margin: 0 auto 40px; 
-            font-size: 1.2rem; color: var(--text-dim);
-            line-height: 1.6;
-        }
+        /* --- HERO SECTION --- */
+        .hero { padding: 160px 5% 100px; text-align: center; background: radial-gradient(circle at 50% -20%, var(--primary-glow), transparent 50%); }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { max-width: 650px; margin: 0 auto 40px; font-size: 1.2rem; color: var(--text-dim); line-height: 1.6; }
 
         .cta-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        .btn { padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; text-decoration: none; border: none; }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px var(--primary-glow); }
+        .btn { padding: 14px 32px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; text-decoration: none; border: none; font-size: 1rem; }
+        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 10px 25px -5px var(--primary-glow); }
         .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-        /* Floating Stats Section */
-        .stats-section {
-            display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
-            padding: 40px 5%;
-        }
+        /* --- FLOATING STATS --- */
+        .stats-section { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; padding: 40px 5%; border-bottom: 1px solid var(--border); }
         .stat-item { text-align: center; }
-        .stat-item h2 { font-size: 2.5rem; color: var(--text); }
-        .stat-item p { color: var(--primary); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
+        .stat-item h2 { font-size: 2.5rem; color: var(--text); margin-bottom: 5px; }
+        .stat-item p { color: var(--primary); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Terminal Window */
-        .terminal-container { padding: 0 5%; margin-bottom: 100px; }
-        .terminal {
-            max-width: 900px; margin: 0 auto;
-            background: #000; border-radius: 12px;
-            border: 1px solid var(--border); overflow: hidden;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
-        }
-        .term-head { background: #1a1a1a; padding: 12px; display: flex; gap: 8px; border-bottom: 1px solid #333; }
+        /* --- TERMINAL --- */
+        .terminal-container { padding: 80px 5%; }
+        .terminal { max-width: 900px; margin: 0 auto; background: #000; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .term-head { background: #1a1a1a; padding: 14px 20px; display: flex; gap: 8px; border-bottom: 1px solid #333; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .term-body { padding: 25px; font-family: 'Fira Code', monospace; color: #a1a1aa; font-size: 14px; }
+        .term-body { padding: 30px; font-family: 'Fira Code', monospace; color: #a1a1aa; font-size: 15px; line-height: 1.8; }
 
-        /* Features Section */
+        /* --- FEATURES --- */
         .section { padding: 100px 5%; }
         .section-header { text-align: center; margin-bottom: 60px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { 
-            background: var(--surface); padding: 40px; border-radius: 20px; 
-            border: 1px solid var(--border); transition: 0.3s;
-        }
-        .card:hover { border-color: var(--primary); background: var(--bg); }
-        .card h3 { margin-bottom: 15px; font-size: 1.4rem; }
-        .card p { color: var(--text-dim); }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--surface); padding: 40px; border-radius: 20px; border: 1px solid var(--border); transition: 0.3s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .card h3 { margin-bottom: 15px; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+        .card p { color: var(--text-dim); line-height: 1.6; }
 
-        /* Language Slider */
+        /* --- SLIDER --- */
         .slider-container { background: var(--surface); padding: 30px 0; overflow: hidden; white-space: nowrap; border-top: 1px solid var(--border); }
         .slider { display: inline-block; animation: slide 20s linear infinite; }
         .slider span { font-size: 1.5rem; font-weight: 800; margin: 0 40px; color: var(--text-dim); opacity: 0.4; }
         @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        /* Testimonials */
+        /* --- TESTIMONIALS --- */
         .testimonials { background: var(--bg); }
         .test-card { font-style: italic; font-size: 1.1rem; border-left: 4px solid var(--primary); padding-left: 20px; }
 
-        /* Footer */
-        footer { 
-            padding: 80px 5% 40px; background: var(--surface); border-top: 1px solid var(--border);
-        }
-        .footer-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 60px;
-        }
-        .footer-col h4 { margin-bottom: 20px; font-weight: 700; }
-        .footer-col a { display: block; text-decoration: none; color: var(--text-dim); margin-bottom: 10px; font-size: 0.9rem; }
-        .copyright { text-align: center; color: var(--text-dim); font-size: 0.8rem; padding-top: 40px; border-top: 1px solid var(--border); }
+        /* --- UNIFIED SHARED FOOTER --- */
+        footer { padding: 80px 5% 40px; background: var(--surface); border-top: 1px solid var(--border); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+        .footer-col h4 { margin-bottom: 20px; font-weight: 700; color: var(--text); font-size: 1.1rem; }
+        .footer-col a { display: block; text-decoration: none; color: var(--text-dim); margin-bottom: 12px; font-size: 0.95rem; transition: 0.2s; }
+        .footer-col a:hover { color: var(--primary); transform: translateX(3px); }
+        .copyright { text-align: center; color: var(--text-dim); font-size: 0.85rem; padding-top: 40px; border-top: 1px solid var(--border); }
 
-        /* Mobile Menu */
+        /* Mobile Adjustments */
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
-            
-            .nav-links { 
-                display: none; /* Hide standard links */
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--surface);
-                padding: 20px;
-                gap: 15px;
-                border-bottom: 1px solid var(--border);
-                box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-            }
-
-            .nav-links.active { display: flex; } /* Toggle class */
-
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: var(--surface); padding: 20px; gap: 20px; border-bottom: 1px solid var(--border); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+            .nav-links.active { display: flex; }
             .nav-links .btn { width: 100%; text-align: center; }
-            #theme-toggle { width: 100%; }
-
-            .hero h1 { font-size: 3rem; }
-            .section { padding: 60px 5%; }
+            .theme-toggle-btn { width: 100%; justify-content: center; }
+            .hero h1 { font-size: 3.2rem; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .footer-grid .footer-col:first-child { grid-column: span 2; }
+        }
+        @media (max-width: 480px) {
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-grid .footer-col:first-child { grid-column: span 1; }
         }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
     <nav>
-        <div class="logo"><span>⚡</span> CodeBot</div>
+        <a href="/" class="logo"><i data-lucide="zap"></i> CodeBot</a>
         
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </button>
 
         <div class="nav-links" id="navLinks">
-            <button id="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
-            <a href="/login" class="btn btn-secondary" style="padding: 8px 20px;">Login</a>
-            <a href="/signup" class="btn btn-secondary" style="padding: 8px 20px;">Signup</a>
+            <button class="theme-toggle-btn" onclick="toggleGlobalTheme()">
+                <i data-lucide="sun" id="theme-icon"></i>
+                <span id="theme-text">Light Mode</span>
+            </button>
+            <a href="/login">Login</a>
+            <a href="/signup" class="btn btn-primary" style="padding: 10px 24px;">Get Started</a>
         </div>
     </nav>
 
@@ -258,91 +232,122 @@
     <section id="features" class="section">
         <div class="section-header">
             <h2>Powerful by Design</h2>
-            <p>Built to handle the most complex enterprise codebases.</p>
+            <p style="color: var(--text-dim); margin-top: 10px;">Built to handle the most complex enterprise codebases.</p>
         </div>
         <div class="grid">
             <div class="card">
-                <h3>Intelligent Debugging</h3>
+                <h3><i data-lucide="terminal" style="color: var(--primary)"></i> Intelligent Debugging</h3>
                 <p>Paste code or paste an error. CodeBot traces the stack and finds the logic flaw in seconds.</p>
             </div>
             <div class="card">
-                <h3>Code Documentation</h3>
+                <h3><i data-lucide="file-code-2" style="color: var(--primary)"></i> Code Documentation</h3>
                 <p>Generate clean, readable JSDoc or Swagger docs automatically from your raw source code.</p>
             </div>
             <div class="card">
-                <h3>Security Audit</h3>
+                <h3><i data-lucide="shield-check" style="color: var(--primary)"></i> Security Audit</h3>
                 <p>Automatically scans for SQL injection, XSS, and broken auth patterns before you push to production.</p>
             </div>
         </div>
     </section>
 
-    <section id="testimonials" class="section" style="background: var(--surface);">
+    <section id="testimonials" class="section testimonials">
         <div class="section-header">
             <h2>Trusted by the best</h2>
         </div>
         <div class="grid">
             <div class="card test-card">
                 <p>"CodeBot saved us 40 hours of refactoring in the first week. It's like having a Senior Dev in my pocket."</p>
-                <br><strong>- Sarah J., Lead Dev at Vercel</strong>
+                <br><strong style="color: var(--text)">- Sarah J., Lead Dev at Vercel</strong>
             </div>
             <div class="card test-card">
                 <p>"The security audit feature is a lifesaver. It caught a major leak before we went live."</p>
-                <br><strong>- Mike D., CTO</strong>
+                <br><strong style="color: var(--text)">- Mike D., CTO</strong>
             </div>
         </div>
     </section>
 
     <section class="section" style="text-align: center;">
         <div class="card" style="max-width: 800px; margin: 0 auto; background: linear-gradient(to right, var(--primary-glow), transparent);">
-            <h2>Ready to ship faster?</h2>
-            <p style="margin: 20px 0;">Join 50,000+ developers building the future with CodeBot.</p>
-            <a href="/signup" class="btn btn-primary">Get Started Now</a>
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">Ready to ship faster?</h2>
+            <p style="margin: 20px 0; font-size: 1.1rem;">Join 50,000+ developers building the future with CodeBot.</p>
+            <a href="/signup" class="btn btn-primary" style="margin-top: 15px;">Get Started Now</a>
         </div>
     </section>
 
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <div class="logo">⚡ CodeBot</div>
-                <p style="margin-top: 15px;">The only AI partner you'll ever need.</p>
+                <div class="logo"><i data-lucide="zap"></i> CodeBot</div>
+                <p style="margin-top: 15px; color: var(--text-dim); line-height: 1.6; max-width: 250px;">
+                    The only AI partner you'll ever need for building production-grade software.
+                </p>
             </div>
             <div class="footer-col">
                 <h4>Product</h4>
+                <a href="#">Features</a>
                 <a href="#">Security</a>
-                <a href="#">Extension</a>
                 <a href="#">CLI Tool</a>
+                <a href="#">API Access</a>
             </div>
             <div class="footer-col">
                 <h4>Company</h4>
-                <a href="#">Careers</a>
+                <a href="#">About Us</a>
                 <a href="#">Blog</a>
-                <a href="#">Privacy</a>
+                <a href="#">Careers</a>
+                <a href="#">Privacy Policy</a>
             </div>
             <div class="footer-col">
-                <h4>Support</h4>
-                <a href="https://www.linkedin.com/in/gupta-aniket5/">LinkedIn</a>
+                <h4>Connect</h4>
+                <a href="https://www.linkedin.com/in/gupta-aniket5/" target="_blank">LinkedIn</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+                <a href="#">Discord Community</a>
             </div>
         </div>
-        <p class="copyright">&copy; 2026 CodeBot AI Inc. All rights reserved.</p>
+        <div class="copyright">
+            &copy; 2026 CodeBot AI Inc. Made for developers by developers.
+        </div>
     </footer>
 
     <script>
-        function toggleTheme() {
-            const body = document.body;
-            const btn = document.getElementById('theme-toggle');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                btn.innerHTML = "🌙 Dark Mode";
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                btn.innerHTML = "☀️ Light Mode";
+        // --- UNIVERSAL THEME ENGINE (Cross-Tab Sync) ---
+        function updateThemeUI(theme) {
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            if (icon && text) {
+                icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+                text.innerText = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+                lucide.createIcons(); // Re-render icons
             }
         }
 
-        // New function for mobile menu
+        function toggleGlobalTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('site-theme', newTheme);
+            updateThemeUI(newTheme);
+        }
+
+        // Listen for theme changes in other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'site-theme') {
+                document.documentElement.setAttribute('data-theme', e.newValue);
+                updateThemeUI(e.newValue);
+            }
+        });
+
+        // Setup UI on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateThemeUI(initialTheme);
+            lucide.createIcons(); // Render all icons on page
+        });
+
+        // Mobile Nav
         function toggleMobileMenu() {
-            const nav = document.getElementById('navLinks');
-            nav.classList.toggle('active');
+            document.getElementById('navLinks').classList.toggle('active');
         }
     </script>
 </body>

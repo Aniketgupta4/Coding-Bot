@@ -1,285 +1,460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chatbot Demo</title>
+    <title>CodeBot Pro | Demo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
 
+    <script>
+        const savedTheme = localStorage.getItem('site-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --primary: #22c55e;
+            --bg-dark: #020617;
+            --sidebar-bg: #0f172a;
+            --border: rgba(255, 255, 255, 0.1);
+            --sidebar-width: 280px;
+            --text-main: #ffffff;
+            --msg-bot: #1e293b;
+            --msg-user: #2563eb;
+            --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Essential for mobile height fixes */
-        html, body {
-            height: 100%;
-            height: -webkit-fill-available;
+        [data-theme="light"] {
+            --bg-dark: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --border: rgba(0, 0, 0, 0.1);
+            --text-main: #0f172a;
+            --msg-bot: #e2e8f0;
+            --msg-user: #3b82f6;
+            --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
         }
 
-        body {
-            display: flex;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1e1e2f;
-            color: #fff;
-        }
+        /* --- CUSTOM SLEEK SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* --- SIDEBAR (Mobile Drawer) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
-            width: 240px;
-            background: linear-gradient(180deg, #111827, #020617);
-            padding: 20px;
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 12px rgba(0,0,0,.4);
-            transition: transform 0.3s ease;
-            z-index: 1001;
+            padding: 20px;
+            height: 100%;
+            transition: var(--transition);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1000;
         }
 
         .sidebar h2 {
-            margin-bottom: 20px;
-            color: #22c55e;
-            text-align: center;
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .sidebar p {
-            font-size: 14px;
-            color: #9ca3af;
+        .demo-notice {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 13px;
             line-height: 1.5;
-            text-align: center;
+            margin-bottom: 20px;
         }
 
-        /* --- CHAT AREA --- */
-        .chat {
+        .login-btn-side {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #000;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+            margin-top: auto;
+        }
+        .login-btn-side:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(34,197,94,0.2); }
+
+        /* --- CHAT MAIN AREA --- */
+        .chat-main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #0f172a;
+            min-width: 0;
             position: relative;
-            height: 100%;
         }
 
-        /* Mobile Navbar */
-        .mobile-header {
-            display: none;
-            background: #111827;
-            padding: 10px 15px;
+        .navbar {
+            height: 60px;
+            padding: 0 20px;
+            display: flex;
             align-items: center;
-            border-bottom: 1px solid #334155;
+            justify-content: space-between;
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
         }
+
+        .nav-left { display: flex; align-items: center; gap: 15px; }
 
         .menu-toggle {
+            display: none;
             background: none;
-            border: 1px solid #334155;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-right: 15px;
+            transition: 0.2s;
         }
+        .menu-toggle:hover { background: var(--sidebar-bg); }
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .theme-toggle-btn:hover { background: var(--sidebar-bg); }
 
         .messages {
             flex: 1;
-            padding: 20px;
+            padding: 30px 10%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            -webkit-overflow-scrolling: touch;
+            gap: 20px;
+            scroll-behavior: smooth;
         }
 
         .msg {
-            max-width: 80%;
-            padding: 12px 16px;
+            max-width: 85%;
+            padding: 14px 18px;
             border-radius: 16px;
             font-size: 15px;
-            line-height: 1.5;
-            box-shadow: 0 2px 6px rgba(0,0,0,.4);
+            line-height: 1.6;
             word-wrap: break-word;
+            animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        .user {
-            align-self: flex-end;
-            background: #2563eb;
-            border-bottom-right-radius: 0;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .bot {
-            align-self: flex-start;
-            background: #334155;
-            border-bottom-left-radius: 0;
+        .user { align-self: flex-end; background: var(--msg-user); color: #fff; border-bottom-right-radius: 4px; }
+        .bot { align-self: flex-start; background: var(--msg-bot); color: var(--text-main); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+
+        .input-wrapper {
+            padding: 20px 10%;
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border);
         }
 
-        /* --- INPUT AREA --- */
-        .input-area {
+        .input-box {
             display: flex;
-            padding: 15px;
-            background: #020617;
-            border-top: 1px solid #334155;
-            flex-shrink: 0; /* Prevents input from squashing */
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 8px 15px;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
         }
+        
+        .input-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15); }
 
-        .input-area input {
+        .input-box input {
             flex: 1;
-            padding: 12px 16px;
-            border-radius: 20px;
+            background: transparent;
             border: none;
             outline: none;
-            background: #1f2937;
-            color: #fff;
-            font-size: 16px; /* Prevents iOS auto-zoom */
+            color: var(--text-main);
+            font-size: 15px;
+            padding: 10px 0;
         }
 
-        .input-area button {
-            margin-left: 10px;
-            padding: 0 20px;
-            border-radius: 20px;
+        .send-btn {
+            background: var(--primary);
             border: none;
-            cursor: pointer;
-            font-weight: bold;
-            background: #22c55e;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             color: #000;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: 0.2s;
+        }
+        .send-btn:hover { transform: scale(1.05); }
+
+        /* Shared Footer for Dashboards */
+        .shared-footer {
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid var(--border);
+            background: var(--bg-dark);
+            flex-shrink: 0;
         }
 
-        /* --- POPUP --- */
+        /* --- MOBILE REPAIRS --- */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -100%; height: 100%; z-index: 2000; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+            .sidebar.active { left: 0; }
+            .nav-left .menu-toggle { display: block; }
+            .messages, .input-wrapper { padding: 15px 5%; }
+            .msg { max-width: 95%; }
+        }
+
         .overlay {
+            display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.85);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1500;
+        }
+        .overlay.active { display: block; }
+        
+        /* --- BEAUTIFUL LOCK MODAL --- */
+        .modal {
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 20px;
+            position: fixed;
+            z-index: 4000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
         }
-
-        .popup {
-            background: #1f2937;
-            padding: 30px;
-            width: 100%;
-            max-width: 360px;
-            border-radius: 16px;
+        .modal-content {
+            background-color: var(--sidebar-bg);
+            padding: 40px 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            width: 340px;
             text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .popup a {
-            display: block;
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
+        @keyframes modalPop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
-
-        .login-btn { background: #2563eb; color: #fff; }
-        .signup-btn { background: #22c55e; color: #000; }
-
-        /* --- MOBILE MEDIA QUERIES --- */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .mobile-header {
-                display: flex;
-            }
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 1000;
-            }
-            .sidebar-overlay.show { display: block; }
-            .msg { max-width: 90%; }
-        }
+        .modal-icon { color: var(--primary); width: 56px; height: 56px; margin-bottom: 20px; }
+        .modal-buttons { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; }
+        .btn-modal-primary { padding: 12px; border-radius: 10px; border: none; background: var(--primary); color: #000; font-weight: 700; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .btn-modal-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+        .btn-modal-secondary { padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-main); font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .btn-modal-secondary:hover { background: rgba(128,128,128,0.1); }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <div class="sidebar" id="sidebar">
-        <h2>CodeBot</h2>
-        <p>Demo Mode<br>Login required for full access</p>
+    <div id="lockModal" class="modal">
+      <div class="modal-content">
+        <i data-lucide="lock" class="modal-icon"></i>
+        <h3 style="margin-bottom: 12px; font-size: 22px;">Demo Limit Reached</h3>
+        <p style="font-size: 14px; color: #64748b; line-height: 1.5;">To continue chatting, save history, and unlock full AI capabilities, please create a free account.</p>
+        <div class="modal-buttons">
+          <a href="/login" class="btn-modal-primary">Log In</a>
+          <a href="/signup" class="btn-modal-secondary">Create Account</a>
+        </div>
+      </div>
     </div>
 
-    <div class="chat">
-        <div class="mobile-header">
-            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-            <strong style="color: #22c55e;">CodeBot Demo</strong>
+    <aside class="sidebar" id="sidebar">
+        <h2><i data-lucide="zap"></i> CodeBot</h2>
+        
+        <div class="demo-notice">
+            <i data-lucide="info" style="width: 16px; margin-bottom: 5px;"></i><br>
+            You are in <b>Demo Mode</b>. Persistent history, inline renaming, and full API access are disabled.
         </div>
 
-        <div id="messages" class="messages"></div>
+        <a href="/login" class="login-btn-side">
+            <i data-lucide="user"></i> Login to Unlock
+        </a>
+    </aside>
 
-        <div class="input-area">
-            <input id="msg" placeholder="Ask something..." onkeydown="if(event.key==='Enter') sendMessage()">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+    <main class="chat-main">
+        <nav class="navbar">
+            <div class="nav-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i data-lucide="menu"></i>
+                </button>
+                <h1 id="pageTitle" style="font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    Demo Studio <span style="font-size: 10px; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 4px;">FREE</span>
+                </h1>
+            </div>
+            
+            <button class="theme-toggle-btn" onclick="toggleGlobalTheme()" id="theme-btn">
+                <i data-lucide="sun" id="themeIcon"></i> <span id="themeText">Light Mode</span>
+            </button>
+        </nav>
 
-    <div id="overlay" class="overlay">
-        <div class="popup">
-            <h3>Login Required</h3>
-            <p>Demo time is over.<br>Please login to continue.</p>
-            <a href="/login" class="login-btn">Login</a>
-            <a href="/signup" class="signup-btn">Create Account</a>
+        <div id="messages" class="messages">
+            <div class="msg bot">Welcome to the Demo! Ask a simple coding question to see how it works.</div>
         </div>
-    </div>
+
+        <div class="input-wrapper">
+            <div class="input-box">
+                <input type="text" id="msg" placeholder="Ask something..." onkeydown="if(event.key === 'Enter') sendMessage()">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <i data-lucide="send-horizonal"></i>
+                </button>
+            </div>
+        </div>
+
+        <footer class="shared-footer">
+            &copy; 2026 CodeBot AI - Built with ❤️ for Developers
+        </footer>
+    </main>
 
     <script>
-        // Responsive Menu Function
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('show');
+        lucide.createIcons();
+
+        // 1. UNIVERSAL THEME ENGINE
+        function updateThemeUI(theme) {
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            if (icon && text) {
+                icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+                text.innerText = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+                lucide.createIcons();
+            }
         }
 
+        function toggleGlobalTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('site-theme', newTheme);
+            updateThemeUI(newTheme);
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'site-theme') {
+                document.documentElement.setAttribute('data-theme', e.newValue);
+                updateThemeUI(e.newValue);
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateThemeUI(initialTheme);
+            lucide.createIcons();
+        });
+
+        // 2. SIDEBAR TOGGLE
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        // 3. DEMO CHAT LOGIC (With Typewriter)
         const messages = document.getElementById("messages");
         const input = document.getElementById("msg");
+        const sendBtn = document.getElementById("sendBtn");
 
         const demoReplies = [
-            "Thinking 🤖",
-            "Answering 🚀",
-            ".... 😉",
-            "Wait for Response."
+            "Just a demo! In the real version, I would fetch answers from the Gemini API. 🚀",
+            "Debugging is like being a detective in a crime movie where you are also the murderer. 🕵️‍♂️",
+            "Please login! My full processing power is restricted in this demo mode. 🔒",
+            "HTML is the skeleton, CSS is the skin, and JavaScript is the muscles. 💪"
         ];
 
-        function addMsg(text, cls) {
-            const div = document.createElement("div");
-            div.className = `msg ${cls}`;
-            div.innerText = text;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
+        function typeWriter(element, text) {
+            let i = 0;
+            element.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 20); // typing speed
+                    messages.scrollTop = messages.scrollHeight;
+                }
+            }
+            type();
         }
 
         function sendMessage() {
             const text = input.value.trim();
             if (!text) return;
 
-            addMsg(text, "user");
+            // Add User Message
+            const userDiv = document.createElement("div");
+            userDiv.className = "msg user";
+            userDiv.innerText = text;
+            messages.appendChild(userDiv);
+            
             input.value = "";
+            messages.scrollTop = messages.scrollHeight;
 
+            // Fake "Typing..." Bot Message
+            const botDiv = document.createElement("div");
+            botDiv.className = "msg bot";
+            botDiv.innerHTML = `<span style="opacity: 0.7;"><i>CodeBot is thinking...</i></span>`;
+            messages.appendChild(botDiv);
+            messages.scrollTop = messages.scrollHeight;
+
+            // Simulate Network Delay & Start Typewriter
             setTimeout(() => {
                 const reply = demoReplies[Math.floor(Math.random() * demoReplies.length)];
-                addMsg(reply, "bot");
-            }, 600);
+                typeWriter(botDiv, reply);
+            }, 800);
         }
 
-        /* DEMO TIMER */
+        // 4. DEMO TIMER LIMIT
         setTimeout(() => {
-            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("lockModal").style.display = "flex";
             input.disabled = true;
-        }, 4000); 
-    </script>
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+            sendBtn.style.cursor = 'not-allowed';
+        }, 4000); // Trigger modal after 12 seconds for demo
 
+    </script>
 </body>
 </html>

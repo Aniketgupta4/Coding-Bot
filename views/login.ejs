@@ -1,70 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | CodeBot AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        const savedTheme = localStorage.getItem('site-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
     <style>
         :root {
-            /* Dark Theme (Same as Front Page) */
-            --bg: #0a0a0a;
+            /* Dark Theme */
+            --bg-main: #0a0a0a;
             --surface: #141414;
-            --text: #ffffff;
+            --text-main: #ffffff;
             --text-dim: #a1a1aa;
             --primary: #22c55e;
             --primary-glow: rgba(34, 197, 94, 0.15);
             --border: #27272a;
             --glass: rgba(10, 10, 10, 0.8);
+            --scrollbar-thumb: rgba(255, 255, 255, 0.2);
         }
 
         [data-theme="light"] {
-            --bg: #ffffff;
-            --surface: #f4f4f5;
-            --text: #09090b;
-            --text-dim: #71717a;
+            /* Light Theme */
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
             --primary: #16a34a;
             --primary-glow: rgba(22, 163, 74, 0.1);
-            --border: #e4e4e7;
+            --border: rgba(0, 0, 0, 0.1);
             --glass: rgba(255, 255, 255, 0.8);
+            --scrollbar-thumb: rgba(0, 0, 0, 0.2);
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            transition: background 0.5s ease;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
-        /* Navbar */
+        /* Sleek Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 10px; }
+
+        /* --- NAVBAR --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 8%;
+            padding: 1rem 5%;
             background: var(--glass);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
         }
 
-        .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
         
-        #theme-toggle {
+        .theme-toggle-btn {
             background: var(--surface);
             border: 1px solid var(--border);
-            color: var(--text);
-            padding: 6px 14px;
+            color: var(--text-main);
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
         }
+        .theme-toggle-btn:hover { border-color: var(--primary); }
 
-        /* Login Section */
+        /* --- LOGIN SECTION --- */
         .main-content {
             flex: 1;
             display: flex;
@@ -99,8 +117,8 @@
             margin-bottom: 15px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg-main);
+            color: var(--text-main);
             outline: none;
             transition: 0.3s;
         }
@@ -111,7 +129,7 @@
             width: 100%;
             padding: 14px;
             background: var(--primary);
-            color: white;
+            color: #000;
             border: none;
             border-radius: 10px;
             font-weight: 700;
@@ -120,46 +138,40 @@
             transition: 0.3s;
         }
 
-        .btn-login:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-login:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 10px 20px -5px var(--primary-glow); }
 
         .switch-text { text-align: center; margin-top: 20px; color: var(--text-dim); font-size: 0.9rem; }
         .switch-text a { color: var(--primary); text-decoration: none; font-weight: 600; }
 
-        /* Professional Footer (Same as Front Page) */
-        footer { 
-            padding: 60px 8% 30px; 
-            background: var(--surface); 
-            border-top: 1px solid var(--border);
-            margin-top: auto;
-        }
+        /* --- UNIFIED SHARED FOOTER --- */
+        footer { padding: 80px 5% 40px; background: var(--surface); border-top: 1px solid var(--border); margin-top: auto; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+        .footer-col h4 { margin-bottom: 20px; font-weight: 700; color: var(--text-main); font-size: 1.1rem; }
+        .footer-col a { display: block; text-decoration: none; color: var(--text-dim); margin-bottom: 12px; font-size: 0.95rem; transition: 0.2s; }
+        .footer-col a:hover { color: var(--primary); transform: translateX(3px); }
+        .copyright { text-align: center; color: var(--text-dim); font-size: 0.85rem; padding-top: 40px; border-top: 1px solid var(--border); }
 
-        .footer-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; margin-bottom: 40px;
-        }
-
-        .footer-col h4 { margin-bottom: 20px; font-weight: 700; color: var(--text); }
-        .footer-col a { display: block; text-decoration: none; color: var(--text-dim); margin-bottom: 10px; font-size: 0.85rem; transition: 0.3s; }
-        .footer-col a:hover { color: var(--primary); transform: translateX(5px); }
-        
-        .footer-logo-desc { grid-column: span 1; }
-        .footer-logo-desc p { color: var(--text-dim); font-size: 0.9rem; margin-top: 10px; }
-
-        .copyright { 
-            text-align: center; color: var(--text-dim); font-size: 0.8rem; 
-            padding-top: 30px; border-top: 1px solid var(--border); 
-        }
-
+        /* Mobile Adjustments */
         @media (max-width: 768px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
-            .footer-logo-desc { grid-column: span 2; }
+            .footer-grid .footer-col:first-child { grid-column: span 2; }
+            nav { padding: 1rem 5%; }
+        }
+        @media (max-width: 480px) {
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-grid .footer-col:first-child { grid-column: span 1; }
+            .login-card { padding: 30px 20px; border: none; background: transparent; box-shadow: none; }
         }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
     <nav>
-        <a href="/" class="logo">⚡ CodeBot</a>
-        <button id="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/" class="logo"><i data-lucide="zap"></i> CodeBot</a>
+        <button class="theme-toggle-btn" onclick="toggleGlobalTheme()">
+            <i data-lucide="sun" id="theme-icon"></i>
+            <span id="theme-text">Light Mode</span>
+        </button>
     </nav>
 
     <div class="main-content">
@@ -179,44 +191,74 @@
 
     <footer>
         <div class="footer-grid">
-            <div class="footer-col footer-logo-desc">
-                <div class="logo">⚡ CodeBot</div>
-                <p>The only AI partner you'll ever need for production-grade code.</p>
+            <div class="footer-col">
+                <div class="logo"><i data-lucide="zap"></i> CodeBot</div>
+                <p style="margin-top: 15px; color: var(--text-dim); line-height: 1.6; max-width: 250px;">
+                    The only AI partner you'll ever need for building production-grade software.
+                </p>
             </div>
             <div class="footer-col">
                 <h4>Product</h4>
                 <a href="#">Features</a>
                 <a href="#">Security</a>
-                <a href="#">API</a>
+                <a href="#">CLI Tool</a>
+                <a href="#">API Access</a>
             </div>
             <div class="footer-col">
                 <h4>Company</h4>
-                <a href="#">About</a>
+                <a href="#">About Us</a>
                 <a href="#">Blog</a>
                 <a href="#">Careers</a>
+                <a href="#">Privacy Policy</a>
             </div>
             <div class="footer-col">
-                <h4>Support</h4>
-                <a href="https://www.linkedin.com/in/gupta-aniket5/">LinedIn</a>
+                <h4>Connect</h4>
+                <a href="https://www.linkedin.com/in/gupta-aniket5/" target="_blank">LinkedIn</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+                <a href="#">Discord Community</a>
             </div>
         </div>
         <div class="copyright">
-            &copy; 2026 CodeBot AI Inc. All rights reserved.
+            &copy; 2026 CodeBot AI Inc. Made for developers by developers.
         </div>
     </footer>
 
     <script>
-        function toggleTheme() {
-            const body = document.body;
-            const btn = document.getElementById('theme-toggle');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                btn.innerHTML = "🌙 Dark Mode";
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                btn.innerHTML = "☀️ Light Mode";
+        // --- UNIVERSAL THEME ENGINE (Cross-Tab Sync) ---
+        function updateThemeUI(theme) {
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            if (icon && text) {
+                icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+                text.innerText = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+                lucide.createIcons(); // Re-render icons
             }
         }
+
+        function toggleGlobalTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('site-theme', newTheme);
+            updateThemeUI(newTheme);
+        }
+
+        // Listen for theme changes in other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'site-theme') {
+                document.documentElement.setAttribute('data-theme', e.newValue);
+                updateThemeUI(e.newValue);
+            }
+        });
+
+        // Setup UI on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateThemeUI(initialTheme);
+            lucide.createIcons(); // Render all icons on page
+        });
     </script>
 </body>
 </html>
